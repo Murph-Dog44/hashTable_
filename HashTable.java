@@ -45,7 +45,12 @@ public class HashTable {
     }
 
     public String get(String key) {
-
+        myItr itr = keys();
+        if (hashTable[0] != null && key.equals(hashTable[0].value)) return key;
+        while (itr.hasNext()){
+            if (key.equals(itr.next())) return key;
+        }
+        return null;
     }
 
     public String remove(String key){
@@ -68,7 +73,7 @@ public class HashTable {
         return null;
 	}
 
-    public Iterator keys() {
+    public myItr keys() {
         return new myItr();
     }
 
@@ -105,6 +110,10 @@ public class HashTable {
             return null;
         }
 
+        public String getSpotOn(){
+            return ""+spotOn;
+        }
+
         public void remove(){
 
         }
@@ -112,7 +121,16 @@ public class HashTable {
 
 
     public void print(){
-
+        String returnString = "";
+        myItr itr = keys();
+        if (hashTable[0] != null){
+            returnString += hashTable[0].value+" "+itr.getSpotOn()+"\n";
+        }
+        while (itr.hasNext()){
+            Node nodeToPrint = itr.next();
+            returnString += nodeToPrint.value+" "+itr.getSpotOn()+"\n";
+        }
+        System.out.print(returnString);
 	}
 
 	/**
@@ -148,7 +166,8 @@ public class HashTable {
                     System.out.println("Error in input file");
                     System.exit(1);
                 }
-                put(key, value);
+                // put(key, value);
+                put(key);
             }
         }
         catch (IOException e) {
