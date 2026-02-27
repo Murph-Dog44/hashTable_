@@ -9,7 +9,7 @@ public class HashTable {
     // Methods you have to supply:
 
     public void put(String key) {
-        int hashCode = key.hashCode();
+        int hashCode = Math.abs(key.hashCode());
         if (hashTable[hashCode%width] != null){
             Node node = hashTable[hashCode%width];
             while (node.next != null){
@@ -22,12 +22,13 @@ public class HashTable {
         //resize hashTable to 2x
         if (numItems>=(2.0/3.0)*width){
             Node[] newHashTable = new Node[width*2];
+            //find all nodes and put them into the new arrayList with a new hashCode.
             for(int i = 0; i<width; i++){
                 if (hashTable[i] != null){
                     Node currNode = hashTable[i];
                     while (currNode != null){
-                        if (newHashTable[currNode.value.hashCode()%width] != null){
-                            Node node = newHashTable[currNode.value.hashCode()%width];
+                        if (newHashTable[Math.abs(currNode.value.hashCode())%width] != null){
+                            Node node = newHashTable[Math.abs(currNode.value.hashCode())%width];
                             while (node.next != null){
                                 node = node.next;
                             }
@@ -45,32 +46,29 @@ public class HashTable {
     }
 
     public String get(String key) {
-        myItr itr = keys();
-        if (hashTable[0] != null && key.equals(hashTable[0].value)) return key;
-        while (itr.hasNext()){
-            if (key.equals(itr.next())) return key;
+
+        int index = key.hashCode()%width;
+        Node n = hashTable[index];
+        while (!(n.value.equals(key) && n != null)){
+            n = n.next;
         }
-        return null;
+        return n.value;
     }
 
     public String remove(String key){
-        for (int i = 0; i<width; i++){
-            Node papaNode = null;
-            Node node = hashTable[i];
-            while (node != null){
-                if (node.value.equals(key)){
-                    if (papaNode != null) {
-                        papaNode.next = node.next;
-                        return node.value;
-                    }
-                    hashTable[i] = null;
-                    return node.value;
-                }
-                papaNode = node;
-                node = node.next;
-            }
+        int index = key.hashCode()%width;
+        Node papaNode = null;
+        Node node = hashTable[index];
+        while (!(node.value.equals(key)) && node != null){
+            papaNode = node;
+            node = node.next;
         }
-        return null;
+        if (node == null){
+            papaNode.next = null;
+            return null;
+        }
+        papaNode.next = node.next;
+        return node.value;
 	}
 
     public myItr keys() {
